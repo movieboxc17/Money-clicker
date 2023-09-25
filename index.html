@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .money {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .click-button,
+        .upgrade-button,
+        .auto-clicker-button {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .click-button {
+            background-color: blue;
+        }
+
+        .upgrade-button,
+        .auto-clicker-button {
+            background-color: gray;
+        }
+
+        .upgrade-button.active,
+        .auto-clicker-button.active {
+            background-color: green;
+        }
+
+        .auto-clicker-info {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        .auto-clicker-earnings {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="money">Money: $<span id="money">0</span></h1>
+        <button id="clickButton" class="click-button">Click for $<span id="clickValue">1</span></button>
+        <h2 class="upgrade">Upgrade: +<span id="upgradeValue">1</span> per click</h2>
+        <button id="upgradeButton" class="upgrade-button">Buy Upgrade ($<span id="upgradeCost">10</span>)</button>
+        <button id="autoClickerButton" class="auto-clicker-button">Buy Auto Clicker ($<span id="autoClickerCost">600</span>)</button>
+        <h2 class="auto-clicker-info" id="autoClickerInfo"></h2>
+        <h2 class="auto-clicker-earnings" id="autoClickerEarnings"></h2>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let money = 0;
+            let clickValue = 1;
+            let upgradeCost = 10;
+            let autoClickerCost = 600;
+            let autoClickerLevel = 0;
+            let autoClickerEarnings = 10;
+            let autoClickerActive = false;
+
+            const moneyDisplay = document.getElementById("money");
+            const clickButton = document.getElementById("clickButton");
+            const upgradeValueDisplay = document.getElementById("upgradeValue");
+            const upgradeButton = document.getElementById("upgradeButton");
+            const autoClickerButton = document.getElementById("autoClickerButton");
+            const autoClickerInfo = document.getElementById("autoClickerInfo");
+            const autoClickerEarningsDisplay = document.getElementById("autoClickerEarnings");
+
+            function updateUI() {
+                moneyDisplay.textContent = money;
+                clickButton.textContent = `Click for $${clickValue}`;
+                upgradeValueDisplay.textContent = clickValue;
+                upgradeButton.textContent = `Buy Upgrade ($${upgradeCost})`;
+                autoClickerButton.textContent = `Buy Auto Clicker ($${autoClickerCost})`;
+                autoClickerInfo.textContent = autoClickerLevel > 0 ? `Auto Clicker Level: ${autoClickerLevel} ($${autoClickerEarnings}/s)` : "";
+                autoClickerEarningsDisplay.textContent = autoClickerLevel > 0 ? `Auto Clicker: $${autoClickerEarnings}/s` : "";
+                upgradeButton.classList.toggle("active", money >= upgradeCost);
+                autoClickerButton.classList.toggle("active", money >= autoClickerCost);
+            }
+
+            clickButton.addEventListener("click", function() {
+                money += clickValue;
+                updateUI();
+            });
+
+            upgradeButton.addEventListener("click", function() {
+                if (money >= upgradeCost) {
+                    money -= upgradeCost;
+                    clickValue += 1;
+                    upgradeCost *= 2;
+                    updateUI();
+                }
+            });
+
+            autoClickerButton.addEventListener("click", function() {
+                if (money >= autoClickerCost) {
+                    money -= autoClickerCost;
+                    autoClickerLevel += 1;
+                    autoClickerCost = 1200;
+                    autoClickerActive = true;
+                    startAutoClicker();
+                    updateUI();
+                }
+            });
+
+            function startAutoClicker() {
+                setInterval(function() {
+                    money += autoClickerActive ? autoClickerEarnings : 0;
+                    updateUI();
+                }, 1000);
+            }
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
